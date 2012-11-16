@@ -1,0 +1,79 @@
+ECMANAGED
+
+RESTfull API to MANAGE LOAD BALANCER based on keepalived
+By: Juan Carlos Moreno <juancarlos.moreno@ecmanaged.com>
+License: GPLv2
+
+CONFIGURATION:
+
+Create "secret.inc" file with your super secret password or password will be generated on first run
+
+USAGE:
+
+Get info:
+
+	curl -X GET -v http://127.0.0.1:5002/ -H "Content-type: application/json"
+	
+Set main info:
+
+	as defined in keepalived_header.tpl:
+
+	'main': {
+			'email_to':			None,
+			'email_from':		None,
+			'smtp_server':		None,
+			'smtp_timeout':		None,
+			'router_id':		None,
+	}
+
+	curl -X POST -v http://127.0.0.1:5002/main/
+		-u "admin:secret" \
+		-d '{"email_to":"trash@dev.null","router_id":"myloadb"}' \
+		-H "Content-type: application/json"
+
+set config info:
+
+	'config': {
+			'keepalived':	'/etc/keepalived/keepalived.conf',
+			'init_d':		'/etc/init.d/keepalived',
+			'init_action':	'reload',
+		}
+
+	curl -X POST -v http://127.0.0.1:5002/config/ \
+		-u "admin:secret" \
+		-d '{"init_action":"restart"}' \
+		-H "Content-type: application/json"
+
+add/update service:
+
+	curl -X POST -v http://127.0.0.1:5002/service/www/ \
+		-u "admin:secret" \
+		-d '{"ip":"1.2.3.4","port":"80"}' \
+		-H "Content-type: application/json"
+
+delete service:
+
+	curl -X DELETE -v http://127.0.0.1:5002/service/www/ \
+		-u "admin:secret" \
+		-H "Content-type: application/json"
+
+add/update node:
+
+	curl -X POST -v http://127.0.0.1:5002/service/www/node1/ \
+		-u "admin:secret" \
+		-d '{"ip":"1.2.3.4","port":"81"}' \
+		-H "Content-type: application/json"
+
+delete node:
+
+	curl -X DELETE -v http://127.0.0.1:5002/service/www/node1/ \
+		-u "admin:secret" \
+		-H "Content-type: application/json"
+
+
+TODO:
+
+	- add extra checks for nodes
+	- vrrp support
+	- vrrp not multicast
+
